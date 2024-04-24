@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:1.25.5-alpine
+    container_name: nginx
+    ports:
+      - '80:80'
+    volumes:
+      - ./public:/var/www/public
+      - ./storage:/var/www/storage
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - phone_book
+
+  php:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    container_name: php
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - nginx
+    networks:
+      - phone_book
+
+networks:
+  phone_book:
+    name: phone_book
